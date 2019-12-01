@@ -85,7 +85,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         //enemy
         self.enemy?.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 109, height: 82))
         self.enemy?.physicsBody?.affectedByGravity = false
-        self.enemy?.physicsBody?.mass = 200
+        //self.enemy?.physicsBody?.mass = 200
         
         self.bullet?.physicsBody = SKPhysicsBody(circleOfRadius: 10)
         //self.bullet?.physicsBody = SKPhysicsBody(rectangleOf: CGSize (width: 100, height: 100))
@@ -126,8 +126,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
     
     @objc func runTimedCode(){
         //create enemy nodes
-        //let multiplier = 2
-        let multiplier = (kill_count / 10) + 1 //MyNotes: This can varied in equation style to vary bug speed a lot
+        let multiplier = 2
+        //let multiplier = (kill_count / 10) + 1 //MyNotes: This can varied in equation style to vary bug speed a lot
         for _ in 0...multiplier{
             
         
@@ -197,7 +197,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         }
             // MyNotes: Contact Collision detection is not working here for some reason --FIXED --  have to make sure the contact bitmask is set above! -- "player!.physicsBody?.contactTestBitMask = CollisionType.enemy.rawValue"
         else if( ((firstNode.name == "enemy") && (secondNode.name == "player")) ){
-            print("hero has been hit!")
+            //print("hero has been hit!")
             firstNode.removeFromParent()
             //player?.removeFromParent()
             Singleton.shared.recent_bugs_busted = kill_count
@@ -222,7 +222,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
                 upgrade_label!.text = "Upgrade level: " + String(Int(bullet_power_up))
             }
             
-            print("Upgrade contact!" + String(bullet_power_up))
+            //print("Upgrade contact!" + String(bullet_power_up))
             secondNode.removeFromParent()
         }
             /* //used this to test that bullet would make upgrade disappear
@@ -234,20 +234,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
     func touchDown(atPoint pos : CGPoint) {
         
         //The aim for project 7 is to implement a move toward touchdown style of character control
-        if(pos.x > player!.position.x){
-            player!.position = CGPoint(x: player!.position.x + 5, y: player!.position.y)
+        print("player x and y are: ", player!.position.x," ", player!.position.y)
+        print("position x,y are: ", pos.x, ",",pos.y)
+        //This series of conditions replaced the old commit because the multiple "if" conditions were buggy and seemed to be updating slower than the next command was calculating the position and the ship would not always move in the cursor direction.
+        if(pos.x > player!.position.x && pos.y > player!.position.y+50){
+            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y+50)
+        }
+        else if(pos.x < player!.position.x && pos.y < player!.position.y+50){
+            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y-50)
+        }
+        else if(pos.x < player!.position.x && pos.y > player!.position.y+50){
+            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y+50)
+        }
+        else if(pos.x > player!.position.x && pos.y < player!.position.y+50){
+            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y-50)
         }
         else if(pos.x < player!.position.x){
-            player!.position = CGPoint(x: player!.position.x - 5, y: player!.position.y)
+            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y)
         }
-        
-        if(pos.y > player!.position.x){
-            player!.position = CGPoint(x: player!.position.x, y: player!.position.y + 5)
+        else if(pos.x > player!.position.x){
+            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y)
         }
-        else if(pos.y < player!.position.x){
-            player!.position = CGPoint(x: player!.position.x, y: player!.position.y - 5)
-        }
-        
         
         //MyNotes: Next, make a copy of the bullet-sprite node for manipulation
         
