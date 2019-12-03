@@ -237,28 +237,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         print("player x and y are: ", player!.position.x," ", player!.position.y)
         print("position x,y are: ", pos.x, ",",pos.y)
         //This series of conditions replaced the old commit because the multiple "if" conditions were buggy and seemed to be updating slower than the next command was calculating the position and the ship would not always move in the cursor direction.
-        if(pos.x > player!.position.x && pos.y > player!.position.y+50){
-            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y+50)
-        }
-        else if(pos.x < player!.position.x && pos.y < player!.position.y+50){
-            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y-50)
-        }
-        else if(pos.x < player!.position.x && pos.y > player!.position.y+50){
-            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y+50)
-        }
-        else if(pos.x > player!.position.x && pos.y < player!.position.y+50){
-            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y-50)
-        }
-        else if(pos.x < player!.position.x){
-            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y)
-        }
-        else if(pos.x > player!.position.x){
-            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y)
-        }
-        
-        //MyNotes: Next, make a copy of the bullet-sprite node for manipulation
-        
-        //if let n = self.picbullet?.copy() as! SKSpriteNode? {//uncomment this for picbullet
         self.bullet = SKShapeNode.init(circleOfRadius:CGFloat(Double(10) * bullet_power_up))
         self.bullet?.name = "bullet" //MyNotes: Added name here for Collision detection
         self.bullet?.position = CGPoint(x: frame.midX, y: frame.midY)
@@ -269,14 +247,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         bullet!.physicsBody?.categoryBitMask = CollisionType.bullet.rawValue
         bullet!.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue
         self.addChild(bullet!)
+        let bulletpath = UIBezierPath() //beginning of bullet path will vary based on conditionals
+        
+        if(pos.x > player!.position.x && pos.y > player!.position.y+50){
+            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y+50)
+            bulletpath.move(to: CGPoint( x: player!.position.x+50, y: player!.position.y + 50) )
+        }
+        else if(pos.x < player!.position.x && pos.y < player!.position.y+50){
+            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y-50)
+             bulletpath.move(to: CGPoint( x: player!.position.x-50, y: player!.position.y - 50) )
+        }
+        else if(pos.x < player!.position.x && pos.y > player!.position.y+50){
+            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y+50)
+             bulletpath.move(to: CGPoint( x: player!.position.x-50, y: player!.position.y + 50) )
+        }
+        else if(pos.x > player!.position.x && pos.y < player!.position.y+50){
+            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y-50)
+             bulletpath.move(to: CGPoint( x: player!.position.x+50, y: player!.position.y - 50) )
+        }
+        else if(pos.x < player!.position.x){
+            player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y)
+             bulletpath.move(to: CGPoint( x: player!.position.x-50, y: player!.position.y) )
+        }
+        else if(pos.x > player!.position.x){
+            player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y)
+             bulletpath.move(to: CGPoint( x: player!.position.x+50, y: player!.position.y) )
+        }
+        
+        
+           
               
-              //MyNotes: Next, create a movement path for the bullet object from the player to offscreen
-              //This section of code creates a path object and makes n move along the path
-              let bulletpath = UIBezierPath()
-              
-               //bulletpath.move(to: player!.position) //makes player twist
-             bulletpath.move(to: CGPoint( x: player!.position.x, y: player!.position.y + 50) ) // makes player not twist, by moving the start location.
-              //path.addLine(to: CGPoint(x:0,y:200)) //bullet shoots toward center.
+            
               bulletpath.addLine(to: CGPoint(x:player!.position.x,y:player!.position.y+1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
               let move = SKAction.follow(bulletpath.cgPath, asOffset: true, orientToPath: true, speed: 500)
               let sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
