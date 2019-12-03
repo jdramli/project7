@@ -33,6 +33,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
     private var player : SKSpriteNode?
     private var enemy : SKSpriteNode?
     private var gameTimer: Timer? //Timer object to be called regularly
+    private var upgradeTimer: Timer? // Separate timer for the upgrade node
     private var count_label : SKLabelNode?
     private var upgrade_label : SKLabelNode?
     private var kill_count = 0;
@@ -102,7 +103,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         //MyNotes; Create a timer cycle to generate the enemy objects every few seconds
         gameTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(runTimedCode), userInfo: nil, repeats: true)
         
-        
+        upgradeTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(runUpgrades), userInfo: nil, repeats: true)
         //MyNotes: Create physics interactions using the enum UInt32 bitmasks above
         player!.physicsBody?.categoryBitMask = CollisionType.player.rawValue
         enemy!.physicsBody?.categoryBitMask = CollisionType.enemy.rawValue
@@ -123,36 +124,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
 
        
     }
-    
-    @objc func runTimedCode(){
-        //create enemy nodes
-        let multiplier = 2
-        //let multiplier = (kill_count / 10) + 1 //MyNotes: This can varied in equation style to vary bug speed a lot
-        for _ in 0...multiplier{
-            
-        
-        if let e = self.enemy?.copy() as! SKSpriteNode?{
-            e.position = player!.anchorPoint
-            e.position = CGPoint( x: Double.random(in:-300...300), y: Double.random(in: -200...590)  )   
-            self.addChild(e)
-            let enemy_path = UIBezierPath()
-            //adding a speed multiplier based on kill_count
-            
-            enemy_path.move(to: CGPoint(x: Double.random(in:-300...300), y: 590))
-            //path.addLine(to: CGPoint(x:0,y:200)) //bullet shoots toward center.
-            enemy_path.addLine(to: CGPoint(x:player!.position.x,y:player!.position.y-1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
-            let move = SKAction.follow(enemy_path.cgPath, asOffset: true, orientToPath: true, speed: CGFloat(200*multiplier)) //MyNotes: remove 'multiplier' to go back to basic launch
-            let enemy_sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
-            e.run(enemy_sequence)
-            /*
-            if(e.position.y < -600){
-                let lose : SKLabelNode?
-                print("Bug Escaped!")
-                
-            } */
-        }
-        }
-        
+    @objc func runUpgrades(){
         //create  upgrade power-up nodes and set their path.
         if let u = self.upgrade?.copy() as! SKShapeNode?{
             u.position = player!.anchorPoint // Could probably just use 0,0
@@ -171,6 +143,56 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
             let upgrade_sequence = SKAction.sequence([move, .removeFromParent()])
             u.run(upgrade_sequence)
         }
+    }
+    @objc func runTimedCode(){
+        //create enemy nodes
+        let multiplier = 1
+        //let multiplier = (kill_count / 10) + 1 //MyNotes: This can varied in equation style to vary bug speed a lot
+        for _ in 0...multiplier{
+            
+        
+        if let e = self.enemy?.copy() as! SKSpriteNode?{
+            //e.position = player!.anchorPoint
+            e.position = CGPoint( x: Double.random(in:-300...300), y: Double.random(in: -200...590)  )   
+            self.addChild(e)
+            let enemy_path = UIBezierPath()
+            //adding a speed multiplier based on kill_count
+            
+            let spawn_pos = Int.random(in:1...4)
+            switch spawn_pos{
+            case 1:enemy_path.move(to: CGPoint(x: Double.random(in:-350...(-300)), y: 480))
+            //path.addLine(to: CGPoint(x:0,y:200)) //bullet shoots toward center.
+            enemy_path.addLine(to: CGPoint(x:player!.position.x,y:player!.position.y) )
+            enemy_path.addLine(to: CGPoint(x:player!.position.x,y:player!.position.y-1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+            let move = SKAction.follow(enemy_path.cgPath, asOffset: true, orientToPath: true, speed: CGFloat(200*multiplier)) //MyNotes: remove 'multiplier' to go back to basic launch
+            let enemy_sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+            e.run(enemy_sequence)
+            
+            case 2:enemy_path.move(to: CGPoint(x: Double.random(in:-300...300), y: -590))
+            //path.addLine(to: CGPoint(x:0,y:200)) //bullet shoots toward center.
+            enemy_path.addLine(to: CGPoint(x:player!.position.x,y:player!.position.y+1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+            let move = SKAction.follow(enemy_path.cgPath, asOffset: true, orientToPath: true, speed: CGFloat(200*multiplier)) //MyNotes: remove 'multiplier' to go back to basic launch
+            let enemy_sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+            e.run(enemy_sequence)
+            
+            default:enemy_path.move(to: CGPoint(x: Double.random(in:-300...300), y: 0))
+            //path.addLine(to: CGPoint(x:0,y:200)) //bullet shoots toward center.
+            enemy_path.addLine(to: CGPoint(x:player!.position.x,y:player!.position.y-1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+            let move = SKAction.follow(enemy_path.cgPath, asOffset: true, orientToPath: true, speed: CGFloat(200*multiplier)) //MyNotes: remove 'multiplier' to go back to basic launch
+            let enemy_sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+            e.run(enemy_sequence)
+            }
+            
+            /*
+            if(e.position.y < -600){
+                let lose : SKLabelNode?
+                print("Bug Escaped!")
+                
+            } */
+        }
+        }
+        
+        
         
     }
     
@@ -252,36 +274,57 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         if(pos.x > player!.position.x && pos.y > player!.position.y+50){
             player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y+50)
             bulletpath.move(to: CGPoint( x: player!.position.x+50, y: player!.position.y + 50) )
+            bulletpath.addLine(to: CGPoint(x:player!.position.x+1500,y:player!.position.y+1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+                         let move = SKAction.follow(bulletpath.cgPath, asOffset: true, orientToPath: true, speed: 500)
+                         let sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+                         bullet!.run(sequence)
         }
         else if(pos.x < player!.position.x && pos.y < player!.position.y+50){
             player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y-50)
              bulletpath.move(to: CGPoint( x: player!.position.x-50, y: player!.position.y - 50) )
+            bulletpath.addLine(to: CGPoint(x:player!.position.x-1500,y:player!.position.y-1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+                         let move = SKAction.follow(bulletpath.cgPath, asOffset: true, orientToPath: true, speed: 500)
+                         let sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+                         bullet!.run(sequence)
         }
         else if(pos.x < player!.position.x && pos.y > player!.position.y+50){
             player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y+50)
              bulletpath.move(to: CGPoint( x: player!.position.x-50, y: player!.position.y + 50) )
+            bulletpath.addLine(to: CGPoint(x:player!.position.x-1500,y:player!.position.y+1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+                         let move = SKAction.follow(bulletpath.cgPath, asOffset: true, orientToPath: true, speed: 500)
+                         let sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+                         bullet!.run(sequence)
         }
         else if(pos.x > player!.position.x && pos.y < player!.position.y+50){
             player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y-50)
              bulletpath.move(to: CGPoint( x: player!.position.x+50, y: player!.position.y - 50) )
+            bulletpath.addLine(to: CGPoint(x:player!.position.x+1500,y:player!.position.y-1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+                         let move = SKAction.follow(bulletpath.cgPath, asOffset: true, orientToPath: true, speed: 500)
+                         let sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+                         bullet!.run(sequence)
         }
         else if(pos.x < player!.position.x){
             player!.position = CGPoint(x: player!.position.x - 50, y: player!.position.y)
              bulletpath.move(to: CGPoint( x: player!.position.x-50, y: player!.position.y) )
+            bulletpath.addLine(to: CGPoint(x:player!.position.x-1500,y:player!.position.y) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+                         let move = SKAction.follow(bulletpath.cgPath, asOffset: true, orientToPath: true, speed: 500)
+                         let sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+                         bullet!.run(sequence)
         }
         else if(pos.x > player!.position.x){
             player!.position = CGPoint(x: player!.position.x + 50, y: player!.position.y)
              bulletpath.move(to: CGPoint( x: player!.position.x+50, y: player!.position.y) )
+            bulletpath.addLine(to: CGPoint(x:player!.position.x+1500,y:player!.position.y) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
+                         let move = SKAction.follow(bulletpath.cgPath, asOffset: true, orientToPath: true, speed: 500)
+                         let sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
+                         bullet!.run(sequence)
         }
         
         
            
               
             
-              bulletpath.addLine(to: CGPoint(x:player!.position.x,y:player!.position.y+1500) ) //Added 1500 because that is a significant offscreen distance for the bullet to travel.
-              let move = SKAction.follow(bulletpath.cgPath, asOffset: true, orientToPath: true, speed: 500)
-              let sequence = SKAction.sequence([move, .removeFromParent()]) //This "sequence" is critical because it removes the bullet from parent with the function ".removeFromParent()" once the "move" function is complete
-              bullet!.run(sequence)
+             
     
         
        
@@ -335,4 +378,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         //Singleton.shared.bugs_busted = kill_count
        
     }
+    
+    
 }

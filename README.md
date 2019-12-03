@@ -10,3 +10,10 @@ Progress log:
             Added comments detaling this bug fix
             Switched the enemy speed multiplier to just a flat 2 for testing and possibly for the rest of the game.
             
+
+12/2:  Many gameplay updates:
+            Changed bullet spawns to spawn at the 4 corners of the hero
+            Changed bullet path to move diagonally in the same direction in which it spawns
+            Changed enemy spawn areas to upper, lower, and middle of screen.
+            Added a separate game timer to spawn upgrades only every 2 seconds (adjustable now since it is on its own timer)
+            
