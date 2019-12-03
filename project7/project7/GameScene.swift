@@ -32,8 +32,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
     private var upgrade : SKShapeNode? //creating a power_up node
     private var player : SKSpriteNode?
     private var enemy : SKSpriteNode?
+    private var melee_upgrade: SKShapeNode?
     private var gameTimer: Timer? //Timer object to be called regularly
     private var upgradeTimer: Timer? // Separate timer for the upgrade node
+    private var meleeupgradeTimer: Timer?
     private var count_label : SKLabelNode?
     private var upgrade_label : SKLabelNode?
     private var kill_count = 0;
@@ -71,6 +73,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         self.upgrade?.fillColor = SKColor.red
         self.addChild(upgrade!)
         
+        self.melee_upgrade = SKShapeNode.init(circleOfRadius: 40.0)
+        self.melee_upgrade?.name = "melee_upgrade" //MyNotes: Added name here for Collisions
+        self.melee_upgrade?.position = CGPoint(x: 700, y: 700)
+        self.melee_upgrade?.strokeColor = SKColor.blue
+        self.melee_upgrade?.fillColor   = SKColor.blue
+        self.addChild(melee_upgrade!)
+        
         self.player = self.childNode(withName: "//player") as? SKSpriteNode
         self.enemy = self.childNode(withName: "//enemy") as? SKSpriteNode
         self.count_label = self.childNode(withName: "//count_label") as? SKLabelNode
@@ -98,12 +107,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         self.upgrade?.physicsBody?.affectedByGravity = false
         //self.upgrade?.physicsBody?.mass = 40
         
+        self.melee_upgrade?.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 50, height: 50))
+        self.melee_upgrade?.physicsBody?.affectedByGravity = false
         //self.enemy?.isHidden = true
         //self.enemy?.removeFromParent() // this creates a funny glitch where enemies spawn from the center.
         //MyNotes; Create a timer cycle to generate the enemy objects every few seconds
+        //Timers:
         gameTimer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(runTimedCode), userInfo: nil, repeats: true)
         
         upgradeTimer = Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(runUpgrades), userInfo: nil, repeats: true)
+        
+        meleeupgradeTimer = Timer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(runmeleeUpgrades), userInfo: nil, repeats: true)
         //MyNotes: Create physics interactions using the enum UInt32 bitmasks above
         player!.physicsBody?.categoryBitMask = CollisionType.player.rawValue
         enemy!.physicsBody?.categoryBitMask = CollisionType.enemy.rawValue
@@ -123,6 +137,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
        
 
        
+    }
+    @objc func runmeleeUpgrades(){
+           //print("upgrading")
+        //Insert meleeUpgrade code here
+        if let m = self.melee_upgrade?.copy() as! SKShapeNode?{
+            
+            m.position = player!.position
+            self.addChild(m)
+            m.strokeColor = SKColor.blue
+            m.fillColor = SKColor.blue
+            
+            
+        }
+        
     }
     @objc func runUpgrades(){
         //create  upgrade power-up nodes and set their path.
