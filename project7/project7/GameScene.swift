@@ -9,6 +9,7 @@
 import CoreGraphics
 import SpriteKit
 import GameplayKit
+import SceneKit
 
 //This enum type is to create a quick unique collision bitmask by increasing by power of 2.
 enum CollisionType: UInt32{
@@ -16,6 +17,7 @@ enum CollisionType: UInt32{
     case bullet = 2
     case enemy = 4
     case upgrade = 8
+    case melee_upgrade = 16
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDelegate to make sure the physics contact functions can be written.
@@ -41,6 +43,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
     private var kill_count = 0;
     
     private var bullet_power_up = 1.0
+    private var melee_power_up = 1
+    private var barrier : SCNShape
     
     override func sceneDidLoad() {
 
@@ -73,11 +77,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         self.upgrade?.fillColor = SKColor.red
         self.addChild(upgrade!)
         
-        self.melee_upgrade = SKShapeNode.init(circleOfRadius: 40.0)
+        self.melee_upgrade = SKShapeNode.init(circleOfRadius: 30.0)
         self.melee_upgrade?.name = "melee_upgrade" //MyNotes: Added name here for Collisions
         self.melee_upgrade?.position = CGPoint(x: 700, y: 700)
-        self.melee_upgrade?.strokeColor = SKColor.blue
-        self.melee_upgrade?.fillColor   = SKColor.blue
+        self.melee_upgrade?.strokeColor = SKColor.green
+        self.melee_upgrade?.fillColor   = SKColor.green
         self.addChild(melee_upgrade!)
         
         self.player = self.childNode(withName: "//player") as? SKSpriteNode
@@ -107,8 +111,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         self.upgrade?.physicsBody?.affectedByGravity = false
         //self.upgrade?.physicsBody?.mass = 40
         
-        self.melee_upgrade?.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 50, height: 50))
+        self.melee_upgrade?.physicsBody = SKPhysicsBody(circleOfRadius: 30.0)
         self.melee_upgrade?.physicsBody?.affectedByGravity = false
+        
         //self.enemy?.isHidden = true
         //self.enemy?.removeFromParent() // this creates a funny glitch where enemies spawn from the center.
         //MyNotes; Create a timer cycle to generate the enemy objects every few seconds
@@ -123,16 +128,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         enemy!.physicsBody?.categoryBitMask = CollisionType.enemy.rawValue
         bullet!.physicsBody?.categoryBitMask = CollisionType.bullet.rawValue
         upgrade!.physicsBody?.categoryBitMask = CollisionType.upgrade.rawValue
+        melee_upgrade!.physicsBody?.categoryBitMask = CollisionType.melee_upgrade.rawValue
         
-        
-        player!.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue | CollisionType.upgrade.rawValue //This line creates player to enemy collision detection ability, and uses a single bitwise "or" (|) operator to add possible interaction with "upgrade" nodes
+        player!.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue | CollisionType.upgrade.rawValue | CollisionType.melee_upgrade.rawValue //This line creates player to enemy collision detection ability, and uses a single bitwise "or" (|) operator to add possible interaction with "upgrade" nodes
         enemy!.physicsBody?.collisionBitMask = CollisionType.bullet.rawValue | CollisionType.player.rawValue
         bullet!.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue
         upgrade!.physicsBody?.collisionBitMask = CollisionType.player.rawValue
+        melee_upgrade!.physicsBody?.collisionBitMask = CollisionType.player.rawValue
         
         player!.physicsBody?.contactTestBitMask = CollisionType.enemy.rawValue | CollisionType.player.rawValue
         enemy!.physicsBody?.contactTestBitMask = CollisionType.bullet.rawValue //This line creates bullet to enemy contact detection
-        upgrade!.physicsBody?.contactTestBitMask = CollisionType.enemy.rawValue | CollisionType.player.rawValue
+        upgrade!.physicsBody?.contactTestBitMask = CollisionType.player.rawValue
+        melee_upgrade!.physicsBody?.contactTestBitMask =  CollisionType.player.rawValue
         
        
 
@@ -144,9 +151,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         if let m = self.melee_upgrade?.copy() as! SKShapeNode?{
             
             m.position = player!.position
+            
             self.addChild(m)
-            m.strokeColor = SKColor.blue
-            m.fillColor = SKColor.blue
+            m.strokeColor = SKColor.green
+            m.fillColor = SKColor.green
+            let upgrade_path = UIBezierPath()
+             upgrade_path.move(to: CGPoint(x: Double.random(in:-300...300), y: 590))
+             upgrade_path.addLine(to: CGPoint( x: Double.random(in:-300...300), y: 300))
+             for i in 1...10{
+                 let temp = Float(Double(m.position.y) - (100.0*Double(i)))
+                 upgrade_path.addLine(to: CGPoint( x: Double.random(in:-300...300), y: Double(temp)))
+             }
+            
+             let move = SKAction.follow(upgrade_path.cgPath, asOffset: true, orientToPath: true, speed: 300)
+             let upgrade_sequence = SKAction.sequence([move, .removeFromParent()])
+             m.run(upgrade_sequence)
             
             
         }
@@ -280,6 +299,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
             bullet_power_up += 1
             print("Upgrade contact!" + String(bullet_power_up))
         }*/
+        else if( ((firstNode.name == "melee_upgrade") && (secondNode.name == "player"))){
+           if(melee_power_up > 5){
+                //spawn a kinematic physics body near the player!
+                
+            
+            }
+            else{
+                melee_power_up += 1 //increase bullet size!
+                //upgrade_label!.text = "Upgrade level: " + String(Int(bullet_power_up))
+            }
+            
+            //print("Upgrade contact!" + String(bullet_power_up))
+            firstNode.removeFromParent()
+            print("melee_upgrade count: ", melee_power_up)
+        }
     }
     func touchDown(atPoint pos : CGPoint) {
         

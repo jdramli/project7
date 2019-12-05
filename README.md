@@ -17,3 +17,8 @@ Progress log:
             Changed enemy spawn areas to upper, lower, and middle of screen.
             Added a separate game timer to spawn upgrades only every 2 seconds (adjustable now since it is on its own timer)
             
+
+12/5: Completed physics interactions of "melee_upgrade" green balls.
+        Created a count modifier of the green ball contact with player only
+        Resolved issue where bullets were impacting the green ball
+        Working on creating a kinematic body upon contact with 5 green ball upgrades.
