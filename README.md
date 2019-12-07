@@ -3,7 +3,9 @@ While the core concept of this game is similar to the previous projects 5 and 6,
 
 I have implemented some visual changes as well (background and player images) to add some distinction.  While these are not as demanding of a task as thinking about how to code the physics and gameplay, it was a good reminder that adding some new art can make things fresh and fun.
 
-Regarding the physics, I have implemented almost everything that I wanted to, except the final big_block is not behaving as expected.  The biggest achievement in my opinion is the implementation of a shot to respond in the general direction of a click, relative to the player.  Also, I have duplicated successfully multiple game timers and UI Bezier paths, both of which I find vital to a game being developed.  
+Regarding the physics, I have implemented almost everything that I wanted to see experimentally.  The behavior of the final big_block is now fixed to where it will contact and disrupt the enemy nodes while not colliding with the player or the bullets or the upgrades.  The biggest achievement in my opinion is the implementation of a shot to respond in the general direction of a click, relative to the player.  Also, I have duplicated successfully multiple game timers and UI Bezier paths, both of which I find vital to any game being developed.  
+
+I was able to make use of the Singletone class again in another scenario to modify a parameter on the start-screen which will actually affect the gameplay on the game screen (the speed of player movement).
 
 Overall, I have obtained a great deal of confidence in handling certain physics and contact situations in Swift, and furthermore have developed even more curiosity as to what a better solution would look like when implemented.  I am interested in what a cleaner code outline/implementation would look like to produce similar results or handle these physics interactions more efficiently. 
 
@@ -43,5 +45,8 @@ Progress log:
 
 12/7: Added a big_block circle that is supposed to just crash into and push everything it hits
         Effectively added a new UI Bezier path for the big_block to travel from the hero to off-screen.
-        Experiencing physicsbody collision detection bugs, it is not contacting anything
+        Experiencing physicsbody collision detection bugs, it is not contacting anything.
+        Finally resolved all unintended  bugs (i.e. some 'bug'-looking issues where one object goes through another is intentional)
+        Made touch-ups for final commit.
+        
         

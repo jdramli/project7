@@ -125,6 +125,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         self.melee_upgrade?.physicsBody?.affectedByGravity = false
         
         self.big_block!.physicsBody? = SKPhysicsBody(circleOfRadius: 100)
+        self.big_block!.physicsBody?.isDynamic = false
         self.big_block!.physicsBody?.mass = 200
         self.big_block!.physicsBody?.affectedByGravity = false
         //self.enemy?.isHidden = true
@@ -325,7 +326,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
             //barrier. = SCNPhysicsBody
             if let b = self.big_block?.copy() as! SKShapeNode?{
                 b.position = player!.position
-                
+                b.physicsBody = SKPhysicsBody.init(circleOfRadius: 100)
+                b.physicsBody?.affectedByGravity = false
+                b.physicsBody?.mass = 200
+                b.physicsBody?.categoryBitMask = CollisionType.bullet.rawValue
+                b.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue
                 self.addChild(b)
                 let big_block_path = UIBezierPath()
                 big_block_path.move(to: CGPoint(x: player!.position.x + 100, y: player!.position.y+100))
@@ -335,6 +340,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
                  let move = SKAction.follow(big_block_path.cgPath, asOffset: true, orientToPath: true, speed: 300)
                  let upgrade_sequence = SKAction.sequence([move, .removeFromParent()])
                  b.run(upgrade_sequence)
+                /*
+                self.bullet = SKShapeNode.init(circleOfRadius:CGFloat(Double(10) * bullet_power_up))
+                       self.bullet?.name = "bullet" //MyNotes: Added name here for Collision detection
+                       self.bullet?.position = CGPoint(x: frame.midX, y: frame.midY)
+                       self.bullet?.strokeColor = SKColor.white
+                       self.bullet?.fillColor = SKColor.white
+                       self.bullet?.physicsBody = SKPhysicsBody(circleOfRadius:CGFloat(Double(10) * bullet_power_up))
+                       self.bullet?.physicsBody?.affectedByGravity = false
+                       bullet!.physicsBody?.categoryBitMask = CollisionType.bullet.rawValue
+                       bullet!.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue
+                       self.addChild(bullet!)*/
                 
             }
             
