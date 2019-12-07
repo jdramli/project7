@@ -1,4 +1,12 @@
 #  project7
+While the core concept of this game is similar to the previous projects 5 and 6, I have dove a level deeper into the intricacies of interactions of player input and its and object angles/directions.  This project also has 2 additional object nodes added, which seem to significantly increase the code complexity and collision interaction complexity.  
+
+I have implemented some visual changes as well (background and player images) to add some distinction.  While these are not as demanding of a task as thinking about how to code the physics and gameplay, it was a good reminder that adding some new art can make things fresh and fun.
+
+Regarding the physics, I have implemented almost everything that I wanted to, except the final big_block is not behaving as expected.  The biggest achievement in my opinion is the implementation of a shot to respond in the general direction of a click, relative to the player.  Also, I have duplicated successfully multiple game timers and UI Bezier paths, both of which I find vital to a game being developed.  
+
+Overall, I have obtained a great deal of confidence in handling certain physics and contact situations in Swift, and furthermore have developed even more curiosity as to what a better solution would look like when implemented.  I am interested in what a cleaner code outline/implementation would look like to produce similar results or handle these physics interactions more efficiently. 
+
 
 Progress log:
 
@@ -30,4 +38,10 @@ Progress log:
             Added a labelnode to track hero speed change
             Made the speed adjustable in the Singleton
             Updated movement of player in main game based on speed variable.
-            
+
+
+
+12/7: Added a big_block circle that is supposed to just crash into and push everything it hits
+        Effectively added a new UI Bezier path for the big_block to travel from the hero to off-screen.
+        Experiencing physicsbody collision detection bugs, it is not contacting anything
+        

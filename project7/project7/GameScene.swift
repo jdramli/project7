@@ -18,6 +18,7 @@ enum CollisionType: UInt32{
     case enemy = 4
     case upgrade = 8
     case melee_upgrade = 16
+    case big_block = 32
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDelegate to make sure the physics contact functions can be written.
@@ -35,6 +36,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
     private var player : SKSpriteNode?
     private var enemy : SKSpriteNode?
     private var melee_upgrade: SKShapeNode?
+    private var big_block : SKShapeNode?
+    
     private var gameTimer: Timer? //Timer object to be called regularly
     private var upgradeTimer: Timer? // Separate timer for the upgrade node
     private var meleeupgradeTimer: Timer?
@@ -84,6 +87,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         self.melee_upgrade?.fillColor   = SKColor.green
         self.addChild(melee_upgrade!)
         
+        self.big_block = SKShapeNode.init(circleOfRadius: 100)
+        self.big_block?.name = "big_block" //MyNotes: Added name here for Collision detection
+        self.big_block?.strokeColor = SKColor.black
+        self.big_block?.fillColor = SKColor.black
+        self.big_block!.position = CGPoint(x: -700,y: -700)
+        self.addChild(big_block!)
+        
         self.player = self.childNode(withName: "//player") as? SKSpriteNode
         self.enemy = self.childNode(withName: "//enemy") as? SKSpriteNode
         self.count_label = self.childNode(withName: "//count_label") as? SKLabelNode
@@ -114,6 +124,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         self.melee_upgrade?.physicsBody = SKPhysicsBody(circleOfRadius: 30.0)
         self.melee_upgrade?.physicsBody?.affectedByGravity = false
         
+        self.big_block!.physicsBody? = SKPhysicsBody(circleOfRadius: 100)
+        self.big_block!.physicsBody?.mass = 200
+        self.big_block!.physicsBody?.affectedByGravity = false
         //self.enemy?.isHidden = true
         //self.enemy?.removeFromParent() // this creates a funny glitch where enemies spawn from the center.
         //MyNotes; Create a timer cycle to generate the enemy objects every few seconds
@@ -129,19 +142,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
         bullet!.physicsBody?.categoryBitMask = CollisionType.bullet.rawValue
         upgrade!.physicsBody?.categoryBitMask = CollisionType.upgrade.rawValue
         melee_upgrade!.physicsBody?.categoryBitMask = CollisionType.melee_upgrade.rawValue
+        big_block!.physicsBody?.categoryBitMask = CollisionType.big_block.rawValue
         
         player!.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue | CollisionType.upgrade.rawValue | CollisionType.melee_upgrade.rawValue //This line creates player to enemy collision detection ability, and uses a single bitwise "or" (|) operator to add possible interaction with "upgrade" nodes
-        enemy!.physicsBody?.collisionBitMask = CollisionType.bullet.rawValue | CollisionType.player.rawValue
+        enemy!.physicsBody?.collisionBitMask = CollisionType.bullet.rawValue | CollisionType.player.rawValue | CollisionType.big_block.rawValue
         bullet!.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue
         upgrade!.physicsBody?.collisionBitMask = CollisionType.player.rawValue
         melee_upgrade!.physicsBody?.collisionBitMask = CollisionType.player.rawValue
+        big_block!.physicsBody?.collisionBitMask = CollisionType.enemy.rawValue
         
         player!.physicsBody?.contactTestBitMask = CollisionType.enemy.rawValue | CollisionType.player.rawValue
-        enemy!.physicsBody?.contactTestBitMask = CollisionType.bullet.rawValue //This line creates bullet to enemy contact detection
+        enemy!.physicsBody?.contactTestBitMask = CollisionType.bullet.rawValue | CollisionType.big_block.rawValue //This line creates bullet to enemy contact detection
         upgrade!.physicsBody?.contactTestBitMask = CollisionType.player.rawValue
         melee_upgrade!.physicsBody?.contactTestBitMask =  CollisionType.player.rawValue
+        big_block!.physicsBody?.contactTestBitMask =  CollisionType.enemy.rawValue
         
        
+        
+        
+        
+      
 
        
     }
@@ -300,9 +320,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate { //Added SKPhysicsContactDel
             print("Upgrade contact!" + String(bullet_power_up))
         }*/
         else if( ((firstNode.name == "melee_upgrade") && (secondNode.name == "player"))){
-           if(melee_power_up > 5){
+           if(melee_power_up > 1){
                 //spawn a kinematic physics body near the player!
             //barrier. = SCNPhysicsBody
+            if let b = self.big_block?.copy() as! SKShapeNode?{
+                b.position = player!.position
+                
+                self.addChild(b)
+                let big_block_path = UIBezierPath()
+                big_block_path.move(to: CGPoint(x: player!.position.x + 100, y: player!.position.y+100))
+                big_block_path.addLine(to: CGPoint( x: player!.position.x, y: player!.position.y+1800))
+                
+                
+                 let move = SKAction.follow(big_block_path.cgPath, asOffset: true, orientToPath: true, speed: 300)
+                 let upgrade_sequence = SKAction.sequence([move, .removeFromParent()])
+                 b.run(upgrade_sequence)
+                
+            }
+            
+            
+            
             
             }
             else{
