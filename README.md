@@ -22,3 +22,12 @@ Progress log:
         Created a count modifier of the green ball contact with player only
         Resolved issue where bullets were impacting the green ball
         Working on creating a kinematic body upon contact with 5 green ball upgrades.
+
+
+
+12/6:  Updated background picture
+            Added speed adjustment to main screen (two separate buttons)
+            Added a labelnode to track hero speed change
+            Made the speed adjustable in the Singleton
+            Updated movement of player in main game based on speed variable.
+            

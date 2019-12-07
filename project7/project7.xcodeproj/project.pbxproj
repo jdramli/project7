@@ -23,6 +23,8 @@
 		75466C6F23907A2C0001EECE /* enemy.png in Resources */ = {isa = PBXBuildFile; fileRef = 75466C6E23907A2C0001EECE /* enemy.png */; };
 		75466C7123907A340001EECE /* bugs.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 75466C7023907A340001EECE /* bugs.jpg */; };
 		75466C7323907E740001EECE /* spikeshooter.png in Resources */ = {isa = PBXBuildFile; fileRef = 75466C7223907E740001EECE /* spikeshooter.png */; };
+		759CA176239B36AF0027B031 /* spikebackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 759CA175239B36AF0027B031 /* spikebackground.png */; };
+		759CA178239B38450027B031 /* spikeball.png in Resources */ = {isa = PBXBuildFile; fileRef = 759CA177239B38450027B031 /* spikeball.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +67,8 @@
 		75466C6E23907A2C0001EECE /* enemy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = enemy.png; sourceTree = "<group>"; };
 		75466C7023907A340001EECE /* bugs.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bugs.jpg; sourceTree = "<group>"; };
 		75466C7223907E740001EECE /* spikeshooter.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spikeshooter.png; sourceTree = "<group>"; };
+		759CA175239B36AF0027B031 /* spikebackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spikebackground.png; sourceTree = "<group>"; };
+		759CA177239B38450027B031 /* spikeball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spikeball.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +130,8 @@
 				75466C3D239075A10001EECE /* Main.storyboard */,
 				75466C40239075A10001EECE /* Assets.xcassets */,
 				75466C7023907A340001EECE /* bugs.jpg */,
+				759CA177239B38450027B031 /* spikeball.png */,
+				759CA175239B36AF0027B031 /* spikebackground.png */,
 				75466C6E23907A2C0001EECE /* enemy.png */,
 				75466C7223907E740001EECE /* spikeshooter.png */,
 				75466C42239075A10001EECE /* LaunchScreen.storyboard */,
@@ -261,9 +267,11 @@
 				75466C7123907A340001EECE /* bugs.jpg in Resources */,
 				75466C7323907E740001EECE /* spikeshooter.png in Resources */,
 				75466C6F23907A2C0001EECE /* enemy.png in Resources */,
+				759CA178239B38450027B031 /* spikeball.png in Resources */,
 				75466C41239075A10001EECE /* Assets.xcassets in Resources */,
 				75466C44239075A10001EECE /* LaunchScreen.storyboard in Resources */,
 				75466C38239075A10001EECE /* Actions.sks in Resources */,
+				759CA176239B36AF0027B031 /* spikebackground.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

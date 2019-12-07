@@ -22,6 +22,7 @@ class Singleton{
     var recent_bugs_busted = 0
     
     var downloaded_contents = ""
+    var hero_speed = 50
     
     private init(){
         
